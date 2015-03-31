@@ -31,6 +31,7 @@ public class HttpTask extends AsyncTask<String, String, String> {
     public HttpTask(Context context) {
         this.context = context;
     }
+
     @Override
     protected String doInBackground(String... params) {
 
