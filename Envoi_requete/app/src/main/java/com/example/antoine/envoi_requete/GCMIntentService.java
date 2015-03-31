@@ -28,11 +28,11 @@ public class GCMIntentService extends IntentService {
      * par le serveur de notification.
      */
     // Récupération de l'identification du message
-    static final String MESSAGE_ID = "id";
+   // static final String MESSAGE_ID = "id";
     // Récupération du nom du message
-    static final String MESSAGE_TITRE = "titre";
+ //   static final String MESSAGE_TITRE = "titre";
     // Récupération de la date et heure du message
-    static final String MESSAGE_DATE_CREATION = "dateCreation";
+  //  static final String MESSAGE_DATE_CREATION = "dateCreation";
     // Récupération du texte du message
     static final String MESSAGE_TEXTE = "texte";
 
@@ -62,15 +62,13 @@ public class GCMIntentService extends IntentService {
                 // Si c'est un message "classique".
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // Cette boucle représente le travail qui devra être effectué.
-                for (int i = 0; i < 5; i++) {
-                    Log.i(TAG, "Working... " + (i + 1)
-                            + "/5 @ " + SystemClock.elapsedRealtime());
+              /*  for (int i = 0; i < 5; i++) {
+                    Log.i(TAG, "Working... " + (i + 1) + "/5 @ " + SystemClock.elapsedRealtime());
                     try {
                         Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                    }
+                    } catch (InterruptedException e) { }
                 }
-                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());
+                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());*/
                 // Traite les informations se trouvant dans l'extra de l'intent
                 // pour générer une notifiation android que l'on enverra.
                 sendMessageNotification(extras);
@@ -131,7 +129,7 @@ public class GCMIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("Le nom de l'application par exemple")
+                        .setContentTitle("Notification")
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(extras.getString(MESSAGE_TEXTE))
                         .setAutoCancel(true)
@@ -170,7 +168,7 @@ public class GCMIntentService extends IntentService {
             msg.setTexte(extras.getString(MESSAGE_TEXTE));
         }
         Log.d(TAG, "extractMessageFromExtra - fin");*/
-        return extras.getString("msg");
+        return extras.getString("message");
     }
 
 }

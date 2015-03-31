@@ -62,7 +62,7 @@ public class HttpTask extends AsyncTask<String, String, String> {
     }
 
     protected void onPostExecute(String result){
-
+        Log.d("REPONSE", result);
         Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 }

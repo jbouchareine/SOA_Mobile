@@ -17,6 +17,8 @@ public class RegisterTask  extends AsyncTask<String, String, String> {
     Context context;
     GoogleCloudMessaging gcm;
 
+    public String reg_id = "";
+
     public RegisterTask(Context context, GoogleCloudMessaging gcm){
         this.context = context;
         this.gcm = gcm;
@@ -38,7 +40,8 @@ public class RegisterTask  extends AsyncTask<String, String, String> {
     @Override
     protected void onPostExecute(String result){
 
-        Toast.makeText(context, "REG_ID: " + result, Toast.LENGTH_LONG).show();
+        reg_id = result;
+        Toast.makeText(context, "Register done", Toast.LENGTH_LONG).show();
     }
 
 
