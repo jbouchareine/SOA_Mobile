@@ -61,14 +61,6 @@ public class GCMIntentService extends IntentService {
                 sendNotification("Deleted messages on server: " + extras.toString());
                 // Si c'est un message "classique".
             } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-                // Cette boucle représente le travail qui devra être effectué.
-              /*  for (int i = 0; i < 5; i++) {
-                    Log.i(TAG, "Working... " + (i + 1) + "/5 @ " + SystemClock.elapsedRealtime());
-                    try {
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) { }
-                }
-                Log.i(TAG, "Completed work @ " + SystemClock.elapsedRealtime());*/
                 // Traite les informations se trouvant dans l'extra de l'intent
                 // pour générer une notifiation android que l'on enverra.
                 sendMessageNotification(extras);
@@ -93,7 +85,7 @@ public class GCMIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.mipmap.truck)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
                         .setDefaults(Notification.DEFAULT_ALL);
@@ -113,12 +105,18 @@ public class GCMIntentService extends IntentService {
      */
     private void sendMessageNotification(Bundle extras) {
 
-        Intent i = new Intent(this, NotifActivity.class);
-        i.putExtra("type", extras.getInt("type"));
-        i.putExtra("lat", extras.getFloat("lat"));
-        i.putExtra("long", extras.getFloat("long"));
+        Intent i = null;
+
+        if( Integer.parseInt(extras.getString("type")) == 4){
+            i = new Intent(this, ArretActivity.class);
+        }else{
+            i = new Intent(this, NotifActivity.class);
+            i.putExtra("msg", extras.getString("message"));
+        }
+        i.putExtra("type", Integer.parseInt(extras.getString("type")));
+        i.putExtra("lat",  Double.parseDouble(extras.getString("lat")));
+        i.putExtra("long",  Double.parseDouble(extras.getString("long")));
         i.putExtra("id", extras.getString("id_routier"));
-        i.putExtra("msg", extras.getString("message"));
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
 
@@ -126,8 +124,8 @@ public class GCMIntentService extends IntentService {
         mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Arrêt prolongé détecté")
+            .setSmallIcon(R.mipmap.truck)
+            .setContentTitle(extras.getString("title"))
             .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString("message")))
             .setContentText(extras.getString("message"))
             .setAutoCancel(true)

@@ -13,29 +13,17 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class NotifActivity extends ActionBarActivity {
+public class ArretActivity extends ActionBarActivity {
 
     private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notif);
-
-        TextView msg = (TextView) this.findViewById(R.id.msg_notif_activity);
-        msg.setText(getIntent().getExtras().getString("msg"));
+        setContentView(R.layout.activity_arret);
 
         TextView type = (TextView) this.findViewById(R.id.type_notif_activity);
-        switch(getIntent().getExtras().getInt("type")){
-            case 0: type.setText("Panne");
-                break;
-            case 1: type.setText("Accident");
-                break;
-            case 2: type.setText("Bouchon");
-                break;
-            case 3: type.setText("Autre");
-                break;
-        }
+        type.setText("Arrêt prolongé");
 
         TextView id = (TextView) this.findViewById(R.id.id_notif_activity);
         id.setText(getIntent().getExtras().getString("id"));
@@ -43,10 +31,11 @@ public class NotifActivity extends ActionBarActivity {
         setMap();
     }
 
+
     public void setMap(){
 
         if (mMap == null) {
-            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map_notif)).getMap();
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map_arret)).getMap();
         }
 
         double latitude = getIntent().getExtras().getDouble("lat");
@@ -60,7 +49,7 @@ public class NotifActivity extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_notif, menu);
+        getMenuInflater().inflate(R.menu.menu_arret, menu);
         return true;
     }
 
