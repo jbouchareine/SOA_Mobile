@@ -1,14 +1,18 @@
 package com.example.antoine.envoi_requete;
 
+import android.app.ActivityManager;
+import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -21,9 +25,10 @@ public class MainActivity extends ActionBarActivity  implements LocationListener
     private double longitude = 0.0;
     RegisterTask registerTask = null;
     GoogleCloudMessaging gcm;
-
+    Intent i = null;
     private static final String APP_VERSION = "appVersion";
     private static final String PROJECT_NUMBER = "465384961834";
+boolean myservice = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +67,27 @@ public class MainActivity extends ActionBarActivity  implements LocationListener
 
         if(!registerTask.reg_id.equals("")) {
             HttpTask httpTask = new HttpTask(getApplicationContext());
-            httpTask.execute("http://10.11.161.12:8001/test/index.php?id=" + registerTask.reg_id);
+            httpTask.execute("http://10.11.160.253:8001/test/index.php?id=" + registerTask.reg_id);
+        }
+    }
+
+    public void serviceButton(View v){
+
+        Button serviceButton = (Button) this.findViewById(R.id.button2);
+
+        if(!myservice)//play the service
+        {
+            myservice=true;
+           //  i = new Intent(this,LocationService.class);
+            startService(new Intent(this,LocationService.class));
+            serviceButton.setText("Started");
+        }
+        else//stop the service
+        {
+            myservice=false;
+            // i = new Intent(this,LocationService.class);
+            stopService(new Intent(this,LocationService.class));
+            serviceButton.setText("Stopped");
         }
     }
 

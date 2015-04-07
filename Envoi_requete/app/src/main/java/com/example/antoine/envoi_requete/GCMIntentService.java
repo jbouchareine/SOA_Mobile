@@ -48,7 +48,7 @@ public class GCMIntentService extends IntentService {
         // Le paramètre intent de la méthode getMessageType() est la notification push
         // reçue par le BroadcastReceiver.
         String messageType = gcm.getMessageType(intent);
-
+        Log.i("ICI", "OnHandleIntent:");
         if (!extras.isEmpty()) {
             /*
              * On filtre le message (ou notification) sur son type.

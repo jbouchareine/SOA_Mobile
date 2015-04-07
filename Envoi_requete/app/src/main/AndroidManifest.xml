@@ -55,7 +55,7 @@
         </receiver>
 
         <service android:name=".GCMIntentService" />
-
+        <service android:name=".LocationService" />
         <activity
             android:name=".NotifActivity"
             android:label="@string/title_activity_notif" >
