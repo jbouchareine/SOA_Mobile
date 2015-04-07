@@ -112,32 +112,29 @@ public class GCMIntentService extends IntentService {
      * @param extras les extras envoyés par le serveur de notification
      */
     private void sendMessageNotification(Bundle extras) {
-        Log.d(TAG, "Preparing to send notification with message...: " + extras.toString());
 
-        // On crée un objet String à partir des informations récupérées dans
-        // le flux JSON du message envoyé par l'application server
-        String msg = extractMessageFromExtra(extras);
-        // On associe notre notification à une Activity. Ici c'est l'activity
-        // qui affiche le message à l'utilisateur
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, NotifActivity.class).putExtra("msg", msg), 0);
+        Intent i = new Intent(this, NotifActivity.class);
+        i.putExtra("type", extras.getInt("type"));
+        i.putExtra("lat", extras.getFloat("lat"));
+        i.putExtra("long", extras.getFloat("long"));
+        i.putExtra("id", extras.getString("id_routier"));
+        i.putExtra("msg", extras.getString("message"));
+
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, i, 0);
 
         // On récupère le gestionnaire de notification android
-        mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle("Notification")
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                        .setContentText(extras.getString(MESSAGE_TEXTE))
-                        .setAutoCancel(true)
-                        .setDefaults(Notification.DEFAULT_SOUND);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Arrêt prolongé détecté")
+            .setStyle(new NotificationCompat.BigTextStyle().bigText(extras.getString("message")))
+            .setContentText(extras.getString("message"))
+            .setAutoCancel(true)
+            .setDefaults(Notification.DEFAULT_SOUND);
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
-        Log.d(TAG, "Notification sent successfully.");
     }
 
     /**

@@ -14,35 +14,32 @@ import java.io.IOException;
  */
 public class RegisterTask  extends AsyncTask<String, String, String> {
 
-    Context context;
-    GoogleCloudMessaging gcm;
+    private static final String PROJECT_NUMBER = "465384961834";
 
+    private Context context;
     public String reg_id = "";
 
-    public RegisterTask(Context context, GoogleCloudMessaging gcm){
+    public RegisterTask(Context context){
         this.context = context;
-        this.gcm = gcm;
     }
 
     @Override
     protected String doInBackground(String... params) {
 
-        String regId = "";
-        String PROJECT_NUMBER = params[0];
+        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
         try {
-            regId = gcm.register(PROJECT_NUMBER);
+            reg_id = gcm.register(PROJECT_NUMBER);
         } catch (IOException ex) {
             Log.d("[RegisterInBackground]", ex.getMessage());
         }
-        return regId;
+        return null;
     }
 
     @Override
     protected void onPostExecute(String result){
 
-        reg_id = result;
-        Toast.makeText(context, "Register done", Toast.LENGTH_LONG).show();
+        if(reg_id.equals(""))
+            Toast.makeText(context, "Erreur lors de l'enregistrement. Veuillez vérifier votre connexion internet", Toast.LENGTH_LONG).show();
     }
-
 
 }

@@ -14,8 +14,23 @@ public class NotifActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notif);
 
-        TextView texte = (TextView) this.findViewById(R.id.msg);
-        texte.setText(getIntent().getExtras().getString("msg"));
+        /*TextView msg = (TextView) this.findViewById(R.id.msg);
+        msg.setText(getIntent().getExtras().getString("msg"));*/
+
+        TextView type = (TextView) this.findViewById(R.id.type_notif_activity);
+        switch(getIntent().getExtras().getInt("type")){
+            case 0: type.setText("Panne");
+                break;
+            case 1: type.setText("Accident");
+                break;
+            case 2: type.setText("Bouchon");
+                break;
+            case 3: type.setText("Autre");
+                break;
+        }
+
+        TextView id = (TextView) this.findViewById(R.id.id_notif_activity);
+        id.setText(getIntent().getExtras().getString("id"));
     }
 
 

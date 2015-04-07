@@ -24,16 +24,13 @@ public class LocationService extends Service implements LocationListener {
     private double longitude = 0.0;
     private int compteurArret;
 
-    LocationManager lm;
-    RegisterTask registerTask = null;
-    GoogleCloudMessaging gcm;
-    private static final String PROJECT_NUMBER = "465384961834";
+    private LocationManager lm;
+    private RegisterTask registerTask;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        Log.i(TAG, "onCreate");
         compteurArret = 0;
 
         lm = (LocationManager) this.getSystemService(LOCATION_SERVICE);
@@ -42,16 +39,14 @@ public class LocationService extends Service implements LocationListener {
         }
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, this);
 
+        Toast.makeText(this, "Service démarré", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public synchronized int onStartCommand(Intent intent, int flags, int startId) {
 
-        Log.i(TAG, "OnStartCommand");
-
-        gcm = GoogleCloudMessaging.getInstance(this);
-        registerTask = new RegisterTask(getApplicationContext(), gcm);
-        registerTask.execute(PROJECT_NUMBER);
+        registerTask = new RegisterTask(this);
+        registerTask.execute();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -60,8 +55,9 @@ public class LocationService extends Service implements LocationListener {
     public synchronized void onDestroy() {
         super.onDestroy();
 
-        Log.i(TAG, "onDestroy");
         lm.removeUpdates(this);
+        Toast.makeText(this, "Service terminé", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
@@ -72,8 +68,8 @@ public class LocationService extends Service implements LocationListener {
     @Override
     public void onLocationChanged(Location location) {
 
-        double roundLat = Math.round(location.getLatitude() * Math.pow(10,2)) / Math.pow(10,2);
-        double roundLong = Math.round(location.getLongitude() * Math.pow(10,2)) / Math.pow(10,2);
+        double roundLat = Math.round(location.getLatitude() * Math.pow(10,3)) / Math.pow(10,3);
+        double roundLong = Math.round(location.getLongitude() * Math.pow(10,3)) / Math.pow(10,3);
 
         if(roundLat == this.latitude && roundLong == this.longitude)
             compteurArret++;
@@ -84,15 +80,14 @@ public class LocationService extends Service implements LocationListener {
         this.latitude = roundLat;
         this.longitude = roundLong;
 
-        if(compteurArret >= 2)
+        if(compteurArret > 2)
         {
             compteurArret = 0;
             Toast.makeText(this, "Arrêt prolongé détecté", Toast.LENGTH_SHORT).show();
 
-            if(!registerTask.reg_id.equals("")) {
-                HttpTask httpTask = new HttpTask(getApplicationContext());
-                httpTask.execute("http://10.11.160.21:8001/test/index.php?id=" + registerTask.reg_id);
-            }
+            HttpTask httpTask = new HttpTask(this);
+            httpTask.execute(registerTask.reg_id, latitude+"", longitude+"", "4", "123");
+
         }else {
             Toast.makeText(this, "Position: " + roundLat + "  " + roundLong + " => " + compteurArret, Toast.LENGTH_SHORT).show();
         }

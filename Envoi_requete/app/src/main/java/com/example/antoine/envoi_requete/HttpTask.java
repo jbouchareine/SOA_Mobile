@@ -25,6 +25,8 @@ import java.io.InputStreamReader;
  */
 public class HttpTask extends AsyncTask<String, String, String> {
 
+    private static final String URL = "http://192.168.1.32:8001/test/index.php";
+
     private Context context;
     StringBuilder response = new StringBuilder();
 
@@ -32,18 +34,32 @@ public class HttpTask extends AsyncTask<String, String, String> {
         this.context = context;
     }
 
+    /**
+     * Envoi une alerte en arrière plan
+     * @param params
+     * 0 pour le register id
+     * 1 pour la latitude
+     * 2 pour la longitude
+     * 3 pour le type de panne
+     * 4 pour l'id du conducteur
+     * @return
+     */
     @Override
     protected String doInBackground(String... params) {
 
-        String url = params[0];
-        HttpGet httpGet = new HttpGet(url);
+        String reg_id = "reg_id="+params[0];
+        String latitude = "lat="+params[1];
+        String longitude = "long="+params[2];
+        String type_panne = "type="+params[3];
+        String id_routier = "id_routier="+params[4];
+
+        HttpGet httpGet = new HttpGet(URL+"?"+reg_id+"&"+latitude+"&"+longitude+"&"+type_panne+"&"+id_routier);
         HttpClient httpclient = new DefaultHttpClient();
 
         try {
             HttpResponse requete = httpclient.execute(httpGet);
 
             if (requete.getStatusLine().getStatusCode() == 200) {
-                Log.d("[REQUEST]", "Requete envoyé");
 
                 HttpEntity messageEntity = requete.getEntity();
                 InputStream is = messageEntity.getContent();
@@ -53,6 +69,8 @@ public class HttpTask extends AsyncTask<String, String, String> {
                 while ((line = br.readLine()) != null) {
                     response.append(line);
                 }
+            }else{
+                response.append("Erreur lors de l'envoi");
             }
         }catch(Exception e) {
             Log.d("[EXCEPTION]", e.getMessage());
@@ -62,7 +80,8 @@ public class HttpTask extends AsyncTask<String, String, String> {
     }
 
     protected void onPostExecute(String result){
-        Log.d("REPONSE", result);
+
         Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+
     }
 }

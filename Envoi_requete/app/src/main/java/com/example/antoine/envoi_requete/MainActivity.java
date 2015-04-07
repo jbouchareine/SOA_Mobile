@@ -7,31 +7,58 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.ToggleButton;
 
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity  implements LocationListener {
 
+    private GoogleMap mMap;
     private double latitude = 0.0;
     private double longitude = 0.0;
-    RegisterTask registerTask = null;
-    private static final String PROJECT_NUMBER = "465384961834";
-    private boolean myservice = false;
+    private RegisterTask registerTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
+        registerTask = new RegisterTask(this);
+        registerTask.execute();
 
-        registerTask = new RegisterTask(getApplicationContext(), gcm);
-        registerTask.execute(PROJECT_NUMBER);
+        if (mMap == null) {
+            mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.maps)).getMap();
+        }
+
+        //Setup de la liste
+        final ListView listview = (ListView) findViewById(R.id.listView);
+        String[] values = new String[] { "Panne", "Accident", "Bouchon", "Autre" };
+
+        final ArrayList<String> list = new ArrayList<String>();
+        for (int i = 0; i < values.length; ++i) {
+            list.add(values[i]);
+        }
+        final ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_single_choice, list);
+        listview.setAdapter(adapter);
+        listview.setItemChecked(0, true);
+
+        ToggleButton serviceButton = (ToggleButton) this.findViewById(R.id.toggleButton);
+        serviceButton.setText("Lancer");
     }
 
     @Override
@@ -47,29 +74,48 @@ public class MainActivity extends ActionBarActivity  implements LocationListener
 
     public void sendHttp(View v){
 
-        if(!registerTask.reg_id.equals("")) {
-            HttpTask httpTask = new HttpTask(getApplicationContext());
-            httpTask.execute("http://10.11.160.21:8001/test/index.php?id=" + registerTask.reg_id);
-        }
+        ListView listview = (ListView) findViewById(R.id.listView);
+
+        HttpTask httpTask = new HttpTask(this);
+        httpTask.execute(registerTask.reg_id, latitude+"", longitude+"", listview.getCheckedItemPosition()+"", "123");
+
     }
 
     public void serviceButton(View v){
 
-        Button serviceButton = (Button) this.findViewById(R.id.button2);
+        ToggleButton serviceButton = (ToggleButton) this.findViewById(R.id.toggleButton);
 
-        if(!myservice)//play the service
+        if(serviceButton.isChecked())//play the service
         {
-            myservice=true;
             startService(new Intent(this,LocationService.class));
-            serviceButton.setText("Started");
+            serviceButton.setText("Démarré");
         }
         else//stop the service
         {
-            myservice=false;
             stopService(new Intent(this,LocationService.class));
-            serviceButton.setText("Stopped");
+            serviceButton.setText("Stoppé");
         }
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Vous"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude, longitude), 13));
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) { }
+
+    @Override
+    public void onProviderEnabled(String provider) { }
+
+    @Override
+    public void onProviderDisabled(String provider) { }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -92,21 +138,5 @@ public class MainActivity extends ActionBarActivity  implements LocationListener
 
         return super.onOptionsItemSelected(item);
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) { }
-
-    @Override
-    public void onProviderEnabled(String provider) { }
-
-    @Override
-    public void onProviderDisabled(String provider) { }
 
 }

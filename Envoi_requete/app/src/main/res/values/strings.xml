@@ -1,7 +1,7 @@
 <resources>
-    <string name="app_name">Envoi_requete</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="app_name">GeoTruck</string>
+    <string name="title_alerte">Rapport d\'alerte</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_notif">NotifActivity</string>
+    <string name="mapskey">AIzaSyASe6sIdWUEQ9sVm6wDyK-8bj9A50CCyoI</string>
 </resources>
