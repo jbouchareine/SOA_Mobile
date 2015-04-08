@@ -1,10 +1,15 @@
 <resources>
-    <string name="app_name">GeoTruck</string>
+    <string name="app_main">AlerTruck</string>
+    <string name="attempts">AlerTruck</string>
+    <string name="app_name">AlertTruck</string>
     <string name="title_alerte">Rapport d\'alerte</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_notif">NotifActivity</string>
     <string name="mapskey">AIzaSyASe6sIdWUEQ9sVm6wDyK-8bj9A50CCyoI</string>
     <string name="title_activity_arret">ArretActivity</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="password">password</string>
+    <string name="hello_world">Alert Truck !</string>
+    <string name="username">username</string>
+    <string name="app_identification">Alert Truck !</string>
+    <string name="Login">Login</string>
 </resources>
